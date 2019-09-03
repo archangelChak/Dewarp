@@ -9,8 +9,42 @@ from Processing.PreProcessing import Smooth
 from Processing.PostProcessing import Find_Grid, Find_Rect, Create_Image, PixelRemap
 from DocUNet import DocUNet
 from PIL import Image, ImageDraw
+from tqdm import tqdm
+from torch import nn
+import torch
+import torch.optim as optim
 
-def make_docunet_estimator(train_loader, test_loader, num_of_epochs=10):
+from UNet.UNet import Encoder, Decoder
+from utils.layers import conv3x3
+
+def train_epoch(model, optimizer, train_loader, criterion, device):
+    """
+    One epoch of training for model
+
+    :param train_loader: torch.utils.data.DataLoader: DataLoader for input training data (images,masks)
+    :param model: torch.nn.Module: model
+    :param criterion: loss
+    :param optimizer: optimizer for model training
+    :param device: device on which computation is executed
+    :return: float: average loss
+    """
+
+    model.train()
+    
+    for batch_train, batch_answers in train_loader:
+        batch_train = batch_train.to(device)
+        batch_answers = batch_answers.to(device)
+        
+        optimizer.zero_grad()
+        
+        model_answers = model(batch_train)
+        
+        new_loss = criterion(model_answers, batch_answers)
+        new_loss.backward()
+        optimizer.step()
+
+
+def make_docunet_estimator(model,train_loader, test_loader, num_of_epochs=10):
     """
     Training and evaluation for DocUnet model
 
@@ -59,7 +93,8 @@ def GetPredMask(test_image, model):
     :param model: nn.Module: trained model
     :return: tuple(PIL.Image, PIL.Image): tuple of dewarped images
     """
-    test_image=Image.fromarray(test_image)
+    test_image= test_image=transforms.ToPILImage()(test_image)
+    #test_image=Image.fromarray(test_image)
     new_mask = model(transforms.ToTensor()(test_image).unsqueeze(1).cuda()).transpose(1,2).transpose(2,3).cpu().detach().numpy().squeeze()
     return new_mask
 
