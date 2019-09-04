@@ -6,7 +6,7 @@ from UNet.Loss import doc_loss
 from torchvision import transforms
 from Dataset.dataloader import get_loader
 from Processing.PreProcessing import Smooth
-from Processing.PostProcessing import find_Grid, find_Rect, create_Image, pixel_remap
+from Processing.PostProcessing import find_grid, find_rect, create_image, pixel_remap
 from DocUNet import DocUNet
 from PIL import Image, ImageDraw
 from tqdm import tqdm

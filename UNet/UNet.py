@@ -118,7 +118,7 @@ class UNet(nn.Module):
     :param batch_norm: bool: use batch normalisation
     :return: torch.Tensor: output of the last layer
     """
-    def __init__(self, num_classes=1, in_channels=1, num_filters=4, num_blocks=5, batch_norm=False):
+    def __init__(self, num_classes=1, in_channels=3, num_filters=4, num_blocks=5, batch_norm=False):
         super().__init__()
 
         self.encoder = Encoder(in_channels, num_filters, num_blocks)

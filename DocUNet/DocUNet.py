@@ -60,7 +60,7 @@ class DocUNet(nn.Module):
         x = self.encoder(x)
         x = self.decoder(x)
         x = self.concat((x , self.final(x)),1)
-	y = self.final(x)
+        y = self.final(x)
         x = self.encoder1(x)
         x = self.decoder1(x)
         x = self.final(x)

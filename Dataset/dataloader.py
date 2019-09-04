@@ -44,7 +44,7 @@ class Data(Dataset):
         self.transform = transform
         
     def __getitem__(self, ind):
-	image_path = self._image_mask_pairs[ind][0]
+        image_path = self._image_mask_pairs[ind][0]
         mask_path = self._image_mask_pairs[ind][1]
         if self.transform is None:
             return (np.asarray(Image.open(image_path)), Smooth(np.array(np.load(mask_path), dtype=np.float32)))
@@ -57,7 +57,7 @@ class Data(Dataset):
         return len(self._image_mask_pairs)
 
 
-def get_loaders(num_images_train=5000, num_images_test=1000):
+def get_loader(num_images_train=5000, num_images_test=1000):
     """
     Creation of torch.utils.data.DataLoader for input (division of Dataset by batches)
 

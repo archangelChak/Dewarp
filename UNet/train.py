@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -58,7 +59,4 @@ def train_net(model, train_loader,test_loader,number_of_epochs=100, device = 'cu
         writer.add_scalar('data/train_dice', train_dice, epoch)
         writer.add_scalar('data/test_logloss', val_loss, epoch)
         writer.add_scalar('data/test_dice', val_dice, epoch)
-
-        preds = torch.sigmoid(model(image.to(device))).cpu()
-        writer.add_images('preds', preds, epoch)
     return model
