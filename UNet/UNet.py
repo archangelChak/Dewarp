@@ -1,7 +1,7 @@
 import torch
-
 import torch.nn as nn
 from utils.layers import conv3x3
+
 
 class EncoderBlock(nn.Module):
     """
@@ -26,6 +26,7 @@ class EncoderBlock(nn.Module):
 
     def forward(self, x):
         return self.block(x)
+
 
 class Encoder(nn.Module):
     """
@@ -57,6 +58,7 @@ class Encoder(nn.Module):
                 x = self.__getattr__(f'pool{i + 1}')(x)
         return acts
 
+
 class DecoderBlock(nn.Module):
     """
     Creates decoder block U-net based architecture
@@ -84,6 +86,7 @@ class DecoderBlock(nn.Module):
         x = self.relu2(x)
         return x
 
+
 class Decoder(nn.Module):
     """
     Creates decoder U-net based architecture
@@ -103,6 +106,7 @@ class Decoder(nn.Module):
         for i, left in enumerate(acts[-2::-1]):
             up = self.__getattr__(f'block{i + 1}')(up, left)
         return up
+
 
 class UNet(nn.Module):
     """

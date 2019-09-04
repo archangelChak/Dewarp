@@ -4,7 +4,8 @@ from PIL import Image, ImageDraw
 import cv2
 from IPython.display import display
 
-def Find_Grid(smoothed_mask_in, mask_in):
+
+def find_grid(smoothed_mask_in, mask_in):
     """
     Finds 11x11 points which divide document in 10x10 squares
     :param smoothed_mask_in: numpy.ndarray: smoothed mask without bias
@@ -21,6 +22,7 @@ def Find_Grid(smoothed_mask_in, mask_in):
             grid[int(x*10)].append(ind)
     return grid
 
+
 def get_image_from_boxes(image, box, height=75):
     """
     Cuts image with bounding box using perspective Transform
@@ -29,6 +31,7 @@ def get_image_from_boxes(image, box, height=75):
     :param height: int: height of the result image
     :return: numpy.ndarray: cut image
     """
+
     scale = np.sqrt((box[0][1] - box[1][1])**2 + (box[0][0] - box[1][0])**2) / height
     w = 65
     pts1 = np.float32(box)[:, ::-1]
@@ -38,7 +41,8 @@ def get_image_from_boxes(image, box, height=75):
     dst = cv2.warpPerspective(image, M, (w, height))
     return dst
 
-def Find_Rect(grid_in, image_in):
+
+def find_rect(grid_in, image_in):
     """
     Transforms image into list of cut rectangles from image using grid
     :param grid_in: numpy.ndarray: grid (11x11x2)
@@ -54,7 +58,8 @@ def Find_Rect(grid_in, image_in):
             rectangles.append(get_image_from_boxes(image_in,boxes[i*10+j]))
     return rectangles
 
-def Create_Image(rectangles_in):
+
+def create_image(rectangles_in):
     """
     Appends all cut and transformed rectangles into one resulting image
     :param rectangles_in: list: list of cut and transformed rectangles
@@ -67,7 +72,8 @@ def Create_Image(rectangles_in):
         lines[i]=Image.fromarray(np.hstack(tuple(rectangles_in[j*10+i] for j in range(10))))
     new_image=append_images(lines)
     return new_image
-    
+  
+  
 def append_images(images, direction='vertical',
                   bg_color=(255,255,255), aligment='center'):
     """
@@ -89,8 +95,6 @@ def append_images(images, direction='vertical',
         new_height = sum(heights)
 
     new_im = Image.new('RGB', (new_width, new_height), color=bg_color)
-
-
     offset = 0
     for im in images:
         if direction=='horizontal':
@@ -109,8 +113,8 @@ def append_images(images, direction='vertical',
                 x = new_width - im.size[0]
             new_im.paste(im, (x, offset))
             offset += im.size[1]
-
     return new_im
+
 
 def Color(image_in, color_in):
     """
@@ -124,7 +128,8 @@ def Color(image_in, color_in):
     i1[color_in]=[255,0,0]
     return transforms.ToPILImage()(i1)
 
-def PixelRemap(image_in, mask_in):
+
+def pixel_remap(image_in, mask_in):
     """
     Remaps image according to mask pixel by pixel
     :param image_in: np.ndarray: input image

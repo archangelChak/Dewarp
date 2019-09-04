@@ -6,7 +6,18 @@ import numpy as np
 from PIL import Image, ImageDraw
 import torch
 
+
 class Ellipses(Dataset):
+    """
+    Creating dataset of random number of ellipses on background (image, mask pair)
+    
+    param: num_images: int: number of ellipses
+    param: image_shape: tuple(int,int): image resolution
+    param: max_ellipses_num: int: minimum number of ellipses on 1 image
+    param: max_ellipses_num: int: maximum number of ellipses on 1 image
+    param: transform: transforming function 
+    """
+
     def __init__(self, num_images, image_shape=(64, 64), min_ellipses_num=5, max_ellipses_num=10,
                  transform=None):
         super().__init__()
@@ -91,13 +102,26 @@ class Ellipses(Dataset):
         
     def __len__(self):
         return len(self._image_mask_pairs)
-ToTensor_pair = Lambda(
-    lambda image_mask_pair: (torch.Tensor(image_mask_pair[0]), torch.Tensor(image_mask_pair[1]))
-)
-Transpose_pair = Lambda(
-    lambda image_mask_pair: ((image_mask_pair[0]).transpose(0, 2).transpose(1, 2), torch.Tensor(image_mask_pair[1]))
-)
-def CreateEllipsesDataset(num_images_train=100, num_images_test=30, resolution = (64,64)):
+
+
+
+
+def create_ellipses_dataloader(num_images_train=100, num_images_test=30, resolution = (64,64)):
+    """
+    Creating dataloders of ellipses from dataset
+    
+    param: num_images_train: int: number of ellipses in train loader
+    param: num_images_test: int: number of ellipses in test loader
+    param: resolution: tuple(int,int): image resolution
+    return: tuple of dataloaders for train and test
+    """
+
+    ToTensor_pair = Lambda(
+        lambda image_mask_pair: (torch.Tensor(image_mask_pair[0]), torch.Tensor(image_mask_pair[1]))
+    )
+    Transpose_pair = Lambda(
+        lambda image_mask_pair: ((image_mask_pair[0]).transpose(0, 2).transpose(1, 2), torch.Tensor(image_mask_pair[1]))
+    )
     e_train = Ellipses(num_images=100, image_shape = (64,64), transform=Compose([RandomD4_for_pair(), ToTensor_pair, Transpose_pair]))
     e_test = Ellipses(num_images=30, image_shape = (64,64), transform = Compose([ToTensor_pair, Transpose_pair]))
     ellipses_train_loader = DataLoader(e_train, batch_size=2, shuffle=False)

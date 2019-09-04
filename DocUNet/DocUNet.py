@@ -3,9 +3,9 @@ import torch
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-
 from UNet.UNet import Encoder, Decoder
 from utils.layers import conv3x3
+
 
 def train_epoch(model, optimizer, train_loader, criterion, device):
     """
@@ -16,7 +16,6 @@ def train_epoch(model, optimizer, train_loader, criterion, device):
     :param criterion: loss
     :param optimizer: optimizer for model training
     :param device: device on which computation is executed
-    :return: float: average loss
     """
 
     model.train()
@@ -46,6 +45,7 @@ class DocUNet(nn.Module):
     :param in_channels: int: number of channels in input tensor (image)
     :return: (tf.Tensor, tf.Tensor): output of the last layer of each U-net
     """
+
     def __init__(self, num_classes=2, in_channels=1, num_filters=4, num_blocks=5):
         super().__init__()
 
@@ -60,7 +60,8 @@ class DocUNet(nn.Module):
         x = self.encoder(x)
         x = self.decoder(x)
         x = self.concat((x , self.final(x)),1)
+	y = self.final(x)
         x = self.encoder1(x)
         x = self.decoder1(x)
         x = self.final(x)
-        return x
+        return y,x

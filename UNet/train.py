@@ -2,6 +2,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
+from UNet.Loss import evaluate_loss_with_dice
+
 
 def train_epoch(model, optimizer, train_loader, criterion, device):
     """
@@ -12,7 +14,7 @@ def train_epoch(model, optimizer, train_loader, criterion, device):
     :param criterion: loss
     :param optimizer: optimizer for model training
     :param device: device on which computation is executed
-    :return: float: average loss
+    :param device: device to compute on
     """
 
     model.train()
@@ -29,28 +31,34 @@ def train_epoch(model, optimizer, train_loader, criterion, device):
         new_loss.backward()
         optimizer.step()
 
-def TrainNet(model, ellipses_train_loader,ellipses_test_loader,number_of_epochs=100):
+
+def train_net(model, train_loader,test_loader,number_of_epochs=100, device = 'cuda'):
+    """
+    Training UNet
+    param: model: model to train
+    param: train_loader: torch.utils.data.DataLoader: train dataloader
+    param: test_loader: torch.utils.data.DataLoader: test dataloader
+    param: number_of_epochs: int: number of epochs
+    return: model: trained model
+    """
+
     writer = SummaryWriter()
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     criterion = nn.BCEWithLogitsLoss()
-
-
-
     for epoch in tqdm(range(0, number_of_epochs)):
         train_epoch(model, optimizer=optimizer,
-                    train_loader=ellipses_train_loader,
-                    criterion=criterion, device='cuda') 
-        train_loss, train_dice = evaluate_loss(loader=ellipses_train_loader, model=model,
-                                               criterion=criterion, device='cuda')
-        val_loss, val_dice = evaluate_loss(loader=ellipses_test_loader, model=model,
+                    train_loader=train_loader,
+                    criterion=criterion, device=device ) 
+        train_loss, train_dice = evaluate_loss_with_dice(loader=train_loader, model=model,
+                                               criterion=criterion, device=device )
+        val_loss, val_dice = evaluate_loss_with_dice(loader=test_loader, model=model,
                                            criterion=criterion,
-                                           device='cuda')
+                                           device=device )
         writer.add_scalar('data/train_logloss', train_loss, epoch)
         writer.add_scalar('data/train_dice', train_dice, epoch)
         writer.add_scalar('data/test_logloss', val_loss, epoch)
         writer.add_scalar('data/test_dice', val_dice, epoch)
 
-        preds = torch.sigmoid(model(image.to('cuda'))).cpu()
-
+        preds = torch.sigmoid(model(image.to(device))).cpu()
         writer.add_images('preds', preds, epoch)
     return model

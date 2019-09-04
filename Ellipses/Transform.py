@@ -1,6 +1,13 @@
 from skimage.transform import rotate
 import numpy as np
+
+
 class RandomD4(object):
+    """
+    Random D4 transformation
+    
+    param: object: image to transform
+    """
     def __init__(self):
         self.possible_transformations = [
             lambda x: x,
@@ -16,7 +23,15 @@ class RandomD4(object):
     def __call__(self, img):
         transformation_index = np.random.randint(len(self.possible_transformations))
         return self.possible_transformations[transformation_index](img)
+
+
 class RandomD4_for_pair(RandomD4):
+    """
+    Random D4 transformation for pair of images
+    
+    param: RandomD4: transormation function
+    """
+
     def __call__(self, img_mask_pair):
         transformation_index = np.random.randint(len(self.possible_transformations))
         transformed_image = self.possible_transformations[transformation_index](img_mask_pair[0])
