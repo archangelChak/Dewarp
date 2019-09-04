@@ -4,10 +4,10 @@ from torchvision.transforms import Compose, Lambda
 import numpy as np
 
 
-def Smooth(mask_in):
+def Smooth(mask_in, kernel=(15,15)):
     smoothed_mask = mask_in.copy()
     smoothed_mask[smoothed_mask < -0.1] = 1e4
-    kernel = np.ones((5,5),np.float32)/25.
+    kernel = np.ones(kernel,np.float32)/(kernel[0]*kernel[1])
     smoothed_mask[:, :, 0] = convolve2d(smoothed_mask[:, :, 0].astype(np.float32),kernel, mode='same')
     smoothed_mask[:, :, 1] = convolve2d(smoothed_mask[:, :, 1].astype(np.float32),kernel, mode='same')
     smoothed_mask[smoothed_mask > 1] = -1

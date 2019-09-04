@@ -15,8 +15,8 @@ def get_names(path='/archive/docunet/warp_dataset/'):
     :return: tuple(imagenames,masksnames)
     """
 
-    mask_names = glob('/archive/docunet/warp_dataset/*/masks/*').sort() 
-    image_names = glob('/archive/docunet/warp_dataset/*/images/*').sort()  
+    mask_names = sorted(glob('/archive/docunet/warp_dataset/*/masks/*'))
+    image_names = sorted(glob('/archive/docunet/warp_dataset/*/images/*')) 
     return (image_names, mask_names)
 
 

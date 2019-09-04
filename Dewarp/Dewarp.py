@@ -82,10 +82,10 @@ def show_result(test_image, pred_mask):
     else:
         test_image = Image.fromarray(test_image)
     new_mask = pred_mask
-    grid = Find_Grid(Smooth(new_mask),new_mask)
-    rectangles = Find_Rect(grid,np.asarray(test_image))
-    grid_dewarped = Create_Image(rectangles)
-    pixel_dewarped = Image.fromarray(PixelRemap(np.asarray(test_image),new_mask))
+    grid = find_grid(Smooth(new_mask),new_mask)
+    rectangles = find_rect(grid,np.asarray(test_image))
+    grid_dewarped = create_image(rectangles)
+    pixel_dewarped = Image.fromarray(pixel_remap(np.asarray(test_image),new_mask))
     return (grid_dewarped, pixel_dewarped)
 
 
