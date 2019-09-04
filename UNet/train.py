@@ -3,7 +3,7 @@ import torch
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from UNet.Loss import evaluate_loss_with_dice
+from UNet.loss import evaluate_loss_with_dice
 
 
 def train_epoch(model, optimizer, train_loader, criterion, device):

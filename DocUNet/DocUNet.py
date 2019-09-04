@@ -7,32 +7,6 @@ from UNet.UNet import Encoder, Decoder
 from utils.layers import conv3x3
 
 
-def train_epoch(model, optimizer, train_loader, criterion, device):
-    """
-    One epoch of training for model
-
-    :param train_loader: torch.utils.data.DataLoader: DataLoader for input training data (images,masks)
-    :param model: torch.nn.Module: model
-    :param criterion: loss
-    :param optimizer: optimizer for model training
-    :param device: device on which computation is executed
-    """
-
-    model.train()
-    
-    for batch_train, batch_answers in train_loader:
-        batch_train = batch_train.to(device)
-        batch_answers = batch_answers.to(device)
-        
-        optimizer.zero_grad()
-        
-        model_answers = model(batch_train)
-        
-        new_loss = criterion(model_answers, batch_answers)
-        new_loss.backward()
-        optimizer.step()
-
-
 class DocUNet(nn.Module):
     """
     Creates 2 stacked U-net graph where output of the first one is used as input of the second one. First U-net solves the problem of
@@ -59,8 +33,8 @@ class DocUNet(nn.Module):
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
-        x = self.concat((x , self.final(x)),1)
         y = self.final(x)
+        x = self.concat((x , self.final(x)),1)
         x = self.encoder1(x)
         x = self.decoder1(x)
         x = self.final(x)

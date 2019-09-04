@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-from Ellipses.Transform import RandomD4, RandomD4_for_pair
+from Ellipses.transform import RandomD4, RandomD4_for_pair
 from torchvision.transforms import Compose, Lambda
 import numpy as np
 from PIL import Image, ImageDraw
