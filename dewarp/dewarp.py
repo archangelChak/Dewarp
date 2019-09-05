@@ -2,7 +2,7 @@ import torch.optim as optim
 import torch
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
-from UNet.loss import doc_loss
+from UNet.loss import doc_loss, evaluate_loss
 from torchvision import transforms
 from dataset.dataloader import get_loader
 from processing.preprocessing import Smooth
@@ -101,5 +101,5 @@ def get_pred_mask(test_image, model):
 
     test_image= test_image=transforms.ToPILImage()(test_image)
     #test_image=Image.fromarray(test_image)
-    new_mask = model(transforms.ToTensor()(test_image).unsqueeze(1).cuda()).transpose(1,2).transpose(2,3).cpu().detach().numpy().squeeze()
+    new_mask = model(transforms.ToTensor()(test_image).unsqueeze(1).cuda())[1].transpose(1,2).transpose(2,3).cpu().detach().numpy().squeeze()
     return new_mask

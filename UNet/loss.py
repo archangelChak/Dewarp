@@ -24,24 +24,21 @@ def doc_loss(pred_tensor, target_tensor):
     """
     Evaluates custom DocLoss for two vectors
 
-    :param pred_tensor: torch.Tensor: predictions (batch_size, n_features)
-    :param target_tensor: torch.Tensor: originals (batch_size, n_features)
+    :param pred_tensor: torch.Tensor: predictions 
+    :param target_tensor: torch.Tensor: originals
     :return: float: custom loss
     """
 
     target_foreground = target_tensor[target_tensor>0]
     pred_foreground = pred_tensor[target_tensor>0]
     pred_background = pred_tensor[target_tensor<0]
-    n1 = target_foreground.numel()
-    pred_foreground = pred_foreground - target_foreground
-    n2 = pred_background.numel()
-    pred_background = pred_background[pred_background>0]
-    if ((n2>0) & (n1>0)):
-        return torch.abs(pred_foreground).sum()/n1 + 0.1*torch.abs(pred_foreground.sum())/n1 + pred_background.sum()/n2
-    if (n2>0):
-        return prom3.sum()/n2
-    return prom1.sum()/n1 + 0.1*torch.abs(prom.sum())/n1
 
+    foreground_error = pred_foreground - target_foreground
+    n2 = pred_background.numel()
+    foreground_error_final = torch.abs(foreground_error).mean() + torch.abs(foreground_error.mean())*0.1
+    background_error = pred_background[pred_background>0]
+    background_error_final = background_error.sum()/(n2+1)
+    return background_error_final + foreground_error_final
 
 def evaluate_loss(loader, model, criterion, device):
     """
